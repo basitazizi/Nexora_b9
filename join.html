@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join the Team — Nexora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@700;800;900&display=swap&family=Inter:wght@300;400;500;600" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #080808; --surface: #111111; --surface2: #181818;
+    --border: #282828; --muted: #555; --text: #c8c8c8;
+    --white: #f0f0f0; --accent: #dcff56; --accent-dim: rgba(220,255,86,0.12);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Space Mono', monospace; overflow-x: hidden; cursor: none; }
+
+  .cursor { position: fixed; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
+  .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid var(--accent); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform 0.25s ease, width 0.2s, height 0.2s; opacity: 0.5; }
+
+  nav { display: flex; align-items: stretch; border-bottom: 1px solid var(--border); height: 56px; }
+  .nav-logo { width: 140px; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border); font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; font-style: italic; color: var(--accent); letter-spacing: -0.02em; flex-shrink: 0; text-decoration: none; }
+  .nav-items { display: flex; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 0 24px; border-right: 1px solid var(--border); font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; cursor: none; transition: color 0.2s; text-decoration: none; }
+  .nav-item:hover { color: var(--white); }
+  .nav-item .dot { width: 6px; height: 6px; background: var(--muted); flex-shrink: 0; transition: background 0.2s; }
+  .nav-item:hover .dot { background: var(--accent); }
+  .nav-item.active { color: var(--black); background: var(--accent); }
+  .nav-item.active .dot { background: var(--black); }
+  .nav-spacer { flex: 1; }
+
+  /* HERO */
+  .page-hero { display: grid; grid-template-columns: 140px minmax(0,1fr) 42%; min-height: calc(100vh - 56px); border-bottom: 1px solid var(--border); }
+  .ph-sidebar { border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px; }
+  .ph-sidebar-label { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.58rem; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .ph-sidebar-label::before { content: '■'; font-size: 0.4rem; color: var(--accent); writing-mode: horizontal-tb; transform: rotate(90deg); }
+  .ph-content { padding: 72px 64px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--border); }
+  .ph-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 0.58rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 32px; }
+  .ph-tag::before { content: '◆'; font-size: 0.5rem; }
+  .ph-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 5vw, 5rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; color: var(--white); margin-bottom: 28px; }
+  .ph-title .aw { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--accent); letter-spacing: 0.04em; }
+  .ph-title .it { font-style: italic; color: var(--text); }
+  .ph-sub { font-size: 0.85rem; line-height: 1.9; color: var(--muted); max-width: 460px; letter-spacing: 0.03em; margin-bottom: 48px; }
+  .mission-stat-row { display: flex; border: 1px solid var(--border); }
+  .mission-stat { flex: 1; padding: 20px 24px; border-right: 1px solid var(--border); }
+  .mission-stat:last-child { border-right: none; }
+  .ms-val { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; font-weight: 900; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+  .ms-label { font-size: 0.48rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+
+  /* ORG VISUAL */
+  .ph-visual { background: var(--surface); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .ph-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(220,255,86,0.06), transparent 65%); }
+  .ph-visual::after { content: ''; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px); background-size: 40px 40px; }
+  .org-wrap { position: relative; z-index: 1; width: 80%; display: flex; flex-direction: column; align-items: center; }
+  .org-top { background: var(--accent); color: var(--black); padding: 14px 28px; font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 900; letter-spacing: 0.15em; text-align: center; width: 200px; }
+  .org-line-v { width: 1px; height: 32px; background: var(--border); }
+  .org-h-row { display: flex; align-items: flex-start; width: 100%; justify-content: center; position: relative; }
+  .org-h-row::before { content: ''; position: absolute; top: 0; left: 12%; right: 12%; height: 1px; background: var(--border); }
+  .org-branch { display: flex; flex-direction: column; align-items: center; flex: 1; }
+  .org-branch-line { width: 1px; height: 24px; background: var(--border); }
+  .org-card { background: #141414; border: 1px solid var(--border); padding: 12px 10px; text-align: center; width: 110px; position: relative; transition: border-color 0.2s; }
+  .org-card:hover { border-color: var(--accent); }
+  .org-card-tag { font-size: 0.4rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; }
+  .org-card-role { font-size: 0.56rem; color: var(--text); letter-spacing: 0.03em; line-height: 1.4; }
+  .org-card-open { position: absolute; top: -5px; right: -5px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.6} }
+  .org-status { margin-top: 28px; font-size: 0.46rem; letter-spacing: 0.15em; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .org-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+
+  /* MARQUEE */
+  .marquee-wrap { border-bottom: 1px solid var(--border); overflow: hidden; padding: 16px 0; background: var(--surface); }
+  .marquee-inner { display: flex; gap: 48px; animation: marquee 22s linear infinite; white-space: nowrap; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .marquee-item { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.2em; color: var(--border); text-transform: uppercase; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .marquee-item .sep { color: var(--accent); font-size: 0.8rem; }
+
+  /* VALUES */
+  .section-wrap { display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid var(--border); }
+  .sec-sidebar { border-right: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+  .sec-sidebar-lbl { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .sec-sidebar-lbl::before { content: '■'; font-size: 0.35rem; color: var(--accent); writing-mode: horizontal-tb; transform: rotate(90deg); }
+  .sec-content { padding: 72px; }
+  .sec-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 3.5vw, 3.2rem); font-weight: 300; line-height: 1.1; margin-bottom: 48px; }
+  .sec-heading .aw { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--accent); letter-spacing: 0.06em; }
+
+  .val-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .val-item { background: var(--black); padding: 40px 32px; transition: background 0.2s; position: relative; overflow: hidden; }
+  .val-item:hover { background: var(--surface2); }
+  .val-item::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .val-item:hover::after { transform: scaleX(1); }
+  .val-icon { font-size: 1.8rem; margin-bottom: 20px; }
+  .val-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 12px; }
+  .val-desc { font-size: 0.58rem; color: var(--muted); line-height: 1.9; letter-spacing: 0.03em; }
+
+  /* ROLES */
+  .role-card { border: 1px solid var(--border); margin-bottom: -1px; display: grid; grid-template-columns: 1fr auto; align-items: center; padding: 32px 40px; transition: background 0.2s; position: relative; overflow: hidden; cursor: none; }
+  .role-card:hover { background: var(--surface2); }
+  .role-card::before { content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: top; transition: transform 0.25s; }
+  .role-card:hover::before { transform: scaleY(1); }
+  .role-type { font-size: 0.5rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .open-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s ease-in-out infinite; }
+  .role-name { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 300; color: var(--white); margin-bottom: 10px; }
+  .role-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .role-tag { font-size: 0.48rem; letter-spacing: 0.1em; padding: 4px 10px; border: 1px solid var(--border); color: var(--muted); }
+  .role-right { display: flex; align-items: center; gap: 24px; }
+  .role-location { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; text-align: right; }
+  .role-apply { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 10px 20px; font-family: 'Space Mono', monospace; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: none; transition: all 0.2s; text-decoration: none; }
+  .role-card:hover .role-apply { background: var(--accent); color: var(--black); border-color: var(--accent); }
+
+  /* APPLY FORM */
+  .apply-wrap { display: grid; grid-template-columns: 1fr 1fr; }
+  .apply-form-col { padding: 72px; border-right: 1px solid var(--border); }
+  .apply-heading { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 300; color: var(--white); margin-bottom: 40px; }
+  .apply-heading .aw { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--accent); }
+  .form-group { margin-bottom: 22px; }
+  .form-label { display: block; font-size: 0.52rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+  .form-input { width: 100%; background: var(--surface); border: 1px solid var(--border); padding: 13px 16px; font-family: 'Space Mono', monospace; font-size: 0.62rem; color: var(--white); outline: none; transition: border-color 0.2s; letter-spacing: 0.03em; cursor: none; }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .role-select { display: flex; flex-direction: column; gap: 6px; margin-bottom: 22px; }
+  .role-opt { padding: 11px 14px; border: 1px solid var(--border); background: var(--surface); font-size: 0.55rem; letter-spacing: 0.08em; color: var(--muted); cursor: none; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+  .role-opt:hover { border-color: var(--accent); color: var(--white); }
+  .role-opt.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .role-opt::before { content: '□'; font-size: 0.7rem; }
+  .role-opt.selected::before { content: '■'; color: var(--accent); }
+  .btn-submit { display: flex; align-items: center; justify-content: space-between; width: 100%; background: var(--accent); color: var(--black); padding: 16px 24px; font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; border: none; cursor: none; transition: transform 0.15s; margin-top: 8px; }
+  .btn-submit:hover { transform: translateY(-2px); }
+
+  .apply-info-col { padding: 72px; display: flex; flex-direction: column; gap: 36px; }
+  .info-lbl { font-size: 0.52rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .info-lbl::before { content: '◆'; font-size: 0.4rem; }
+  .info-val { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 300; color: var(--white); line-height: 1.4; margin-bottom: 8px; }
+  .info-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.9; letter-spacing: 0.03em; }
+  .divider { width: 100%; height: 1px; background: var(--border); }
+  .perks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .perk { background: var(--black); padding: 20px; transition: background 0.2s; }
+  .perk:hover { background: var(--surface2); }
+  .perk-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .perk-title { font-size: 0.58rem; color: var(--white); letter-spacing: 0.06em; margin-bottom: 4px; }
+  .perk-desc { font-size: 0.52rem; color: var(--muted); line-height: 1.7; }
+
+  footer { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid var(--border); }
+  .foot-logo-col { border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; padding: 40px; }
+  .foot-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-style: italic; color: var(--accent); text-decoration: none; }
+  .foot-content { padding: 48px 56px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .foot-tagline { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 400; color: var(--text); line-height: 1.7; font-family: 'Inter', sans-serif; margin-bottom: 20px; }
+  .foot-copy { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; }
+  .foot-col-title { font-size: 0.58rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; }
+  .foot-links { display: flex; flex-direction: column; gap: 10px; }
+  .foot-link { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; text-decoration: none; transition: color 0.2s; cursor: none; }
+  .foot-link:hover { color: var(--white); }
+
+  body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); background-repeat: repeat; background-size: 128px 128px; }
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.8s ease forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .fade-in:nth-child(1){animation-delay:0.1s} .fade-in:nth-child(2){animation-delay:0.25s} .fade-in:nth-child(3){animation-delay:0.4s} .fade-in:nth-child(4){animation-delay:0.55s}
+
+  /* Keep Space Mono for nav/labels/tags only */
+  nav, .nav-item, .nav-logo,
+  .ann-badge, .hero-tag, .ph-tag, .sidebar-label, .ph-sidebar-label,
+  .pc-tag, .sol-tag, .feat-icon, .sol-num, .step-num,
+  .rc-title, .rc-stat-val, .rc-stat-label,
+  .marquee-item, .sm-title, .sm-badge, .metric-label,
+  .chart-lbl, .foot-col-title, .foot-copy,
+  .form-label, .info-block-label, .info-lbl,
+  .role-type, .role-tag, .org-card-tag, .org-status,
+  .ms-label, .role-opt, .btn-primary, .btn-ghost,
+  .btn-sol, .btn-submit, .btn-price, .btn-cta-large, .role-apply,
+  .ss-item, .tb-title, .ss-logo,
+  .learn-more, .svc-opt, .sec-sidebar-lbl, .val-sidebar-lbl,
+  .sol-sidebar-lbl, .feat-sidebar-lbl, .pop-sidebar-label, .cb-sidebar-lbl,
+  .apply-sidebar-lbl, .roles-sidebar-lbl, .guar-sidebar-lbl,
+  .ph-tag, .price-badge, .ind-sidebar-lbl, .cs-label {
+    font-family: 'Space Mono', monospace !important;
+  }
+
+  /* Inter for all body/paragraph/description text */
+  .hero-desc, .ph-sub, .sol-desc, .pc-desc, .feat-desc,
+  .val-desc, .step-desc, .ind-desc, .guar-desc,
+  .info-block-sub, .info-sub, .foot-tagline,
+  .perk-desc, .role-location, .foot-link, .foot-link:hover,
+  .rc-stat-label, .ph-sub, .cta-sub {
+    font-family: 'Inter', sans-serif !important;
+    letter-spacing: 0em !important;
+  }
+
+
+/* ============================================
+   MOBILE RESPONSIVE — all breakpoints
+   ============================================ */
+
+/* Base fix — prevent ANY horizontal scroll */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+* { box-sizing: border-box; }
+
+@media (max-width: 768px) {
+
+  /* NAV */
+  nav {
+    height: auto;
+    flex-wrap: wrap;
+  }
+  .nav-logo {
+    width: 50%;
+    height: 52px;
+    border-right: 1px solid var(--border);
+  }
+  .nav-items {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-item {
+    padding: 0 16px;
+    height: 44px;
+    font-size: 0.55rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-spacer { display: none; }
+
+  /* ANNOUNCEMENT */
+  .announcement {
+    padding: 10px 16px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .announcement-left { font-size: 0.6rem; flex-wrap: wrap; gap: 6px; }
+
+  /* HERO */
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+  }
+  .hero-sidebar { display: none !important; }
+  .hero-content {
+    padding: 48px 24px 36px !important;
+    border-right: none !important;
+  }
+  .hero-visual {
+    min-height: 360px !important;
+    width: 100% !important;
+  }
+  .saas-wrapper {
+    width: 88% !important;
+    transform: perspective(900px) rotateY(-4deg) rotateX(3deg) !important;
+  }
+  @keyframes floatUp {
+    0%,100% { transform: perspective(900px) rotateY(-4deg) rotateX(3deg) translateY(0px); }
+    50%      { transform: perspective(900px) rotateY(-4deg) rotateX(3deg) translateY(-8px); }
+  }
+  .saas-body { height: 260px !important; }
+  .user-pill { left: -4px !important; top: 16px !important; }
+  .notif { right: -4px !important; bottom: 16px !important; min-width: 160px !important; }
+  .hero-title { font-size: clamp(2.2rem, 8vw, 3.2rem) !important; }
+  .slide-dots { margin-top: 32px !important; }
+
+  /* PAGE HERO (inner pages) */
+  .page-hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    grid-template-columns: unset !important;
+  }
+  .ph-sidebar { display: none !important; }
+  .ph-content {
+    padding: 48px 24px 36px !important;
+    border-right: none !important;
+  }
+  .ph-title { font-size: clamp(2.2rem, 8vw, 3.4rem) !important; }
+  .ph-visual {
+    min-height: 340px !important;
+    width: 100% !important;
+  }
+
+  /* CLIENTS STRIP */
+  .clients-strip {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .cs-label { display: none !important; }
+  .clients-row {
+    padding: 0 !important;
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+  }
+  .client-logo {
+    flex: 0 0 50% !important;
+    padding: 18px 16px !important;
+    font-size: 0.65rem !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .client-logo:nth-child(odd) { border-right: 1px solid var(--border) !important; }
+
+  /* MARQUEE */
+  .marquee-wrap { padding: 12px 0; }
+  .marquee-item { font-size: 0.75rem; }
+
+  /* POPULARITY / PRODUCTS */
+  .popularity {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .pop-sidebar { display: none !important; }
+  .pop-content { padding: 40px 24px !important; }
+  .pop-heading { font-size: clamp(2rem, 7vw, 3rem) !important; margin-bottom: 32px !important; }
+  .products-grid {
+    grid-template-columns: 1fr !important;
+    background: transparent !important;
+    border: none !important;
+    gap: 1px !important;
+  }
+  .product-card {
+    border: 1px solid var(--border) !important;
+    margin-bottom: -1px !important;
+  }
+
+  /* FEATURES */
+  .features {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .feat-sidebar { display: none !important; }
+  .feat-content { padding: 40px 24px !important; }
+  .feat-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .feat-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .feat-item { padding: 24px 18px !important; }
+
+  /* SOLUTIONS PAGE */
+  .solutions-section {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sol-sidebar { display: none !important; }
+  .sol-content { padding: 40px 24px 0 !important; }
+  .sol-card {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sol-card-left, .sol-card-right {
+    padding: 28px 24px !important;
+    border-right: none !important;
+  }
+  .sol-name { font-size: 1.7rem !important; }
+
+  /* INDUSTRIES */
+  .industries {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .ind-sidebar { display: none !important; }
+  .ind-content { padding: 40px 24px !important; }
+  .ind-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .ind-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .ind-item { padding: 24px 18px !important; }
+
+  /* CONTACT PAGE */
+  .contact-body {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .cb-sidebar { display: none !important; }
+  .cb-content {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .form-col {
+    padding: 40px 24px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+  .service-select {
+    grid-template-columns: 1fr !important;
+  }
+  .info-col { padding: 40px 24px !important; }
+  .rc-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* JOIN PAGE */
+  .section-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sec-sidebar { display: none !important; }
+  .sec-content { padding: 40px 24px !important; }
+  .sec-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .val-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .val-item { padding: 28px 24px !important; }
+  .role-card {
+    grid-template-columns: 1fr !important;
+    padding: 24px !important;
+    gap: 20px !important;
+  }
+  .role-right {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+  .role-location { text-align: left !important; }
+
+  .apply-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .apply-form-col {
+    padding: 40px 24px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .form-row { grid-template-columns: 1fr !important; }
+  .role-select { gap: 6px !important; }
+  .apply-info-col { padding: 40px 24px !important; }
+  .perks-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .perk { padding: 16px !important; }
+
+  /* ORG CHART */
+  .org-wrap { width: 92% !important; }
+  .org-card { width: 80px !important; }
+  .org-card-role { font-size: 0.5rem !important; }
+  .org-card-tag { font-size: 0.36rem !important; }
+  .mission-stat-row {
+    flex-wrap: wrap !important;
+  }
+  .mission-stat {
+    flex: 0 0 50% !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  /* STEPS */
+  .steps {
+    grid-template-columns: 1fr !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  .step {
+    border: 1px solid var(--border) !important;
+    margin-bottom: -1px !important;
+  }
+  .step-connector { display: none !important; }
+
+  /* PRICING GRID */
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* GUARANTEE */
+  .guarantee {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .guar-sidebar { display: none !important; }
+  .guar-content { padding: 40px 24px !important; }
+  .guar-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .guar-item { padding: 28px 20px !important; }
+
+  /* CTA BANNER */
+  .cta-banner {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .cta-side {
+    height: 48px !important;
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .cta-side-text {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+    font-size: 0.75rem !important;
+  }
+  .cta-inner {
+    flex-direction: column !important;
+    padding: 40px 24px !important;
+    gap: 28px !important;
+    align-items: flex-start !important;
+  }
+  .cta-title { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; }
+  .btn-cta-large {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 16px 24px !important;
+  }
+
+  /* HOME CTA BANNER (inline style) */
+  section[style*="grid-template-columns: 140px"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* FOOTER */
+  footer {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .foot-logo-col {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 28px 24px !important;
+    justify-content: flex-start !important;
+  }
+  .foot-content {
+    grid-template-columns: 1fr 1fr !important;
+    padding: 32px 24px !important;
+    gap: 28px !important;
+  }
+
+  /* PROCESS SECTION */
+  .process {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .proc-sidebar { display: none !important; }
+  .proc-content { padding: 40px 24px !important; }
+  .proc-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .pricing-heading { font-size: clamp(1.6rem, 6vw, 2.4rem) !important; }
+  .roles {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .roles-sidebar { display: none !important; }
+  .roles-content { padding: 40px 24px !important; }
+  .roles-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+
+  .apply-section {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .apply-sidebar { display: none !important; }
+
+  /* General heading sizes on mobile */
+  h1, .ph-title { font-size: clamp(2.2rem, 8vw, 3.2rem) !important; }
+  h2 { font-size: clamp(1.8rem, 6vw, 2.6rem) !important; }
+
+  /* Remove any overflow causing widths */
+  .saas-sidebar { width: 110px !important; }
+  .saas-body { grid-template-columns: 110px 1fr !important; }
+}
+
+@media (max-width: 480px) {
+  .feat-grid { grid-template-columns: 1fr !important; }
+  .ind-grid { grid-template-columns: 1fr !important; }
+  .foot-content { grid-template-columns: 1fr !important; }
+  .perks-grid { grid-template-columns: 1fr !important; }
+  .rc-stats { grid-template-columns: 1fr 1fr !important; }
+  .hero-title, .ph-title { font-size: clamp(2rem, 9vw, 2.8rem) !important; }
+  .saas-wrapper { width: 94% !important; }
+  .role-right { flex-direction: column !important; align-items: flex-start !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">Nexora</a>
+  <div class="nav-items">
+    <a href="solutions.html" class="nav-item"><span class="dot"></span> Solutions</a>
+    <a href="contact.html" class="nav-item"><span class="dot"></span> Contact</a>
+    <a href="join.html" class="nav-item active"><span class="dot"></span> Join</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="ph-sidebar">
+    <div class="ph-sidebar-label">Join Nexora</div>
+    <div class="ph-sidebar-label">We're Hiring</div>
+  </div>
+  <div class="ph-content">
+    <div class="ph-tag fade-in">San Diego Startup — Now Hiring</div>
+    <h1 class="ph-title fade-in">
+      Build the <span class="it">Future</span> of<br>
+      Small Business<br>
+      with <span class="aw">US</span>
+    </h1>
+    <p class="ph-sub fade-in">Nexora is an early-stage San Diego startup giving local businesses the digital tools big companies have — through AI, automation, and smart design. We're looking for builders, creators, and closers to grow with us from the ground up.</p>
+    <div class="mission-stat-row fade-in">
+      <div class="mission-stat">
+        <div class="ms-val">Early</div>
+        <div class="ms-label">Stage Startup</div>
+      </div>
+      <div class="mission-stat">
+        <div class="ms-val">SD</div>
+        <div class="ms-label">San Diego, CA</div>
+      </div>
+      <div class="mission-stat">
+        <div class="ms-val">4</div>
+        <div class="ms-label">Open Roles</div>
+      </div>
+      <div class="mission-stat">
+        <div class="ms-val">100%</div>
+        <div class="ms-label">Mission Driven</div>
+      </div>
+    </div>
+  </div>
+  <div class="ph-visual">
+    <div class="org-wrap">
+      <div class="org-top">NEXORA</div>
+      <div class="org-line-v"></div>
+      <div class="org-h-row">
+        <div class="org-branch"><div class="org-branch-line"></div><div class="org-card"><div class="org-card-open"></div><div class="org-card-tag">Design</div><div class="org-card-role">UI/UX<br>Designer</div></div></div>
+        <div class="org-branch"><div class="org-branch-line"></div><div class="org-card"><div class="org-card-open"></div><div class="org-card-tag">Engineering</div><div class="org-card-role">Full Stack<br>Dev</div></div></div>
+        <div class="org-branch"><div class="org-branch-line"></div><div class="org-card"><div class="org-card-open"></div><div class="org-card-tag">Growth</div><div class="org-card-role">Sales &<br>Outreach</div></div></div>
+        <div class="org-branch"><div class="org-branch-line"></div><div class="org-card"><div class="org-card-open"></div><div class="org-card-tag">AI / Ops</div><div class="org-card-role">Automation<br>Specialist</div></div></div>
+      </div>
+      <div class="org-status"><span class="org-status-dot"></span> 4 POSITIONS OPEN — SAN DIEGO, CA</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <div class="marquee-item">Early Stage <span class="sep">◆</span></div>
+    <div class="marquee-item">High Impact <span class="sep">◆</span></div>
+    <div class="marquee-item">San Diego, CA <span class="sep">◆</span></div>
+    <div class="marquee-item">AI & Automation <span class="sep">◆</span></div>
+    <div class="marquee-item">Remote Flexible <span class="sep">◆</span></div>
+    <div class="marquee-item">Build From Scratch <span class="sep">◆</span></div>
+    <div class="marquee-item">Early Stage <span class="sep">◆</span></div>
+    <div class="marquee-item">High Impact <span class="sep">◆</span></div>
+    <div class="marquee-item">San Diego, CA <span class="sep">◆</span></div>
+    <div class="marquee-item">AI & Automation <span class="sep">◆</span></div>
+    <div class="marquee-item">Remote Flexible <span class="sep">◆</span></div>
+    <div class="marquee-item">Build From Scratch <span class="sep">◆</span></div>
+  </div>
+</div>
+
+<!-- VALUES -->
+<section class="section-wrap">
+  <div class="sec-sidebar"><div class="sec-sidebar-lbl">Our Culture</div></div>
+  <div class="sec-content">
+    <h2 class="sec-heading">What We <span class="aw">STAND</span> For</h2>
+    <div class="val-grid">
+      <div class="val-item"><div class="val-icon">◆</div><div class="val-title">Move Fast</div><div class="val-desc">We ship, learn, and iterate. No endless meetings — just real work that creates real results for real businesses.</div></div>
+      <div class="val-item"><div class="val-icon">◆</div><div class="val-title">Think in Systems</div><div class="val-desc">We build things that scale. If you're obsessed with automation, process, and making things run better — you'll fit right in.</div></div>
+      <div class="val-item"><div class="val-icon">◆</div><div class="val-title">Local First</div><div class="val-desc">We exist to serve San Diego small businesses. Our work has direct, visible impact on real people in our community.</div></div>
+      <div class="val-item"><div class="val-icon">◆</div><div class="val-title">Ownership Mindset</div><div class="val-desc">At Nexora, everyone owns their work. You're trusted to take something from zero to done — no hand-holding.</div></div>
+      <div class="val-item"><div class="val-icon">◆</div><div class="val-title">Radical Transparency</div><div class="val-desc">We share numbers, decisions, and strategy openly. You'll always know where the company stands and where it's headed.</div></div>
+      <div class="val-item"><div class="val-icon">◆</div><div class="val-title">Grow Together</div><div class="val-desc">We're early — which means early team members grow with the company. Your contributions shape what Nexora becomes.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- OPEN ROLES -->
+<section class="section-wrap">
+  <div class="sec-sidebar"><div class="sec-sidebar-lbl">Open Roles</div></div>
+  <div class="sec-content">
+    <h2 class="sec-heading">Currently <span class="aw">HIRING</span></h2>
+    <div class="role-card">
+      <div><div class="role-type"><span class="open-dot"></span> Open Position</div><div class="role-name">UI/UX Designer</div><div class="role-tags"><span class="role-tag">Figma</span><span class="role-tag">Web Design</span><span class="role-tag">Branding</span><span class="role-tag">Part-time / Project</span></div></div>
+      <div class="role-right"><div class="role-location">San Diego, CA<br>Remote OK</div><a href="#apply" class="role-apply">Apply ▸</a></div>
+    </div>
+    <div class="role-card">
+      <div><div class="role-type"><span class="open-dot"></span> Open Position</div><div class="role-name">Full Stack Developer</div><div class="role-tags"><span class="role-tag">React</span><span class="role-tag">Node.js</span><span class="role-tag">Supabase</span><span class="role-tag">Part-time / Contract</span></div></div>
+      <div class="role-right"><div class="role-location">San Diego, CA<br>Remote OK</div><a href="#apply" class="role-apply">Apply ▸</a></div>
+    </div>
+    <div class="role-card">
+      <div><div class="role-type"><span class="open-dot"></span> Open Position</div><div class="role-name">Sales & Outreach Rep</div><div class="role-tags"><span class="role-tag">Cold Outreach</span><span class="role-tag">Local B2B</span><span class="role-tag">Commission-based</span><span class="role-tag">Flexible Hours</span></div></div>
+      <div class="role-right"><div class="role-location">San Diego, CA<br>In-Person Preferred</div><a href="#apply" class="role-apply">Apply ▸</a></div>
+    </div>
+    <div class="role-card" style="border-bottom:1px solid var(--border);">
+      <div><div class="role-type"><span class="open-dot"></span> Open Position</div><div class="role-name">AI Automation Specialist</div><div class="role-tags"><span class="role-tag">Retell AI</span><span class="role-tag">Make / Zapier</span><span class="role-tag">Prompt Engineering</span><span class="role-tag">Part-time</span></div></div>
+      <div class="role-right"><div class="role-location">San Diego, CA<br>Remote OK</div><a href="#apply" class="role-apply">Apply ▸</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- APPLY FORM -->
+<section class="section-wrap" id="apply">
+  <div class="sec-sidebar"><div class="sec-sidebar-lbl">Apply Now</div></div>
+  <div style="padding:0;">
+    <div class="apply-wrap">
+      <div class="apply-form-col">
+        <div class="apply-heading">Send Your <span class="aw">APPLICATION</span></div>
+        <form action="https://formspree.io/f/mldqnldp" method="POST" id="applyForm" onsubmit="handleApply(event)">
+          <input type="hidden" name="_source" value="Join / Careers Page">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">First Name</label><input type="text" name="first_name" class="form-input" placeholder="John" required></div>
+            <div class="form-group"><label class="form-label">Last Name</label><input type="text" name="last_name" class="form-input" placeholder="Doe"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email Address</label><input type="email" name="email" class="form-input" placeholder="you@email.com" required></div>
+          <div class="form-group"><label class="form-label">LinkedIn or Portfolio URL</label><input type="url" name="portfolio_url" class="form-input" placeholder="https://yourportfolio.com"></div>
+          <div class="form-group">
+            <label class="form-label">Which role interests you?</label>
+            <div class="role-select" id="roleSelect">
+              <div class="role-opt" onclick="toggleRole(this)">UI/UX Designer</div>
+              <div class="role-opt" onclick="toggleRole(this)">Full Stack Developer</div>
+              <div class="role-opt" onclick="toggleRole(this)">Sales & Outreach Rep</div>
+              <div class="role-opt" onclick="toggleRole(this)">AI Automation Specialist</div>
+              <div class="role-opt" onclick="toggleRole(this)">Open to anything — just want to build</div>
+            </div>
+            <input type="hidden" name="role" id="roleHidden" value="">
+          </div>
+          <div class="form-group"><label class="form-label">Why do you want to join Nexora?</label><textarea name="message" class="form-input" placeholder="Tell us about yourself, what you're great at, and why you're excited about what we're building..."></textarea></div>
+          <button type="submit" class="btn-submit" id="applyBtn"><span>SEND APPLICATION</span><span>→</span></button>
+        </form>
+      </div>
+
+      <div class="apply-info-col">
+        <div>
+          <div class="info-lbl">What Happens Next</div>
+          <div class="info-val">We read every application personally.</div>
+          <div class="info-sub">No automated rejections. If your background fits, we'll reach out within 3–5 business days for a casual intro call — no formal interview, just a real conversation about what we're building.</div>
+        </div>
+        <div class="divider"></div>
+        <div>
+          <div class="info-lbl">Perks of Joining Early</div>
+          <div class="perks-grid">
+            <div class="perk"><div class="perk-icon">◆</div><div class="perk-title">Equity Potential</div><div class="perk-desc">Early team members may be offered equity as the company grows.</div></div>
+            <div class="perk"><div class="perk-icon">◆</div><div class="perk-title">Real Ownership</div><div class="perk-desc">Own your domain fully — no micromanagement, no hand-holding.</div></div>
+            <div class="perk"><div class="perk-icon">◆</div><div class="perk-title">Work with AI</div><div class="perk-desc">Hands-on with the latest AI tools, agents, and automations daily.</div></div>
+            <div class="perk"><div class="perk-icon">◆</div><div class="perk-title">San Diego Based</div><div class="perk-desc">Local first, with remote flexibility for most roles.</div></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div>
+          <div class="info-lbl">Not seeing the right role?</div>
+          <div class="info-val" style="font-size:1rem;">We hire for attitude.</div>
+          <div class="info-sub">Talented, hungry, and believe in what we're building? Reach out anyway. Select "Open to anything" and show us what you bring.</div>
+        </div>
+        <div>
+          <div class="info-lbl">Reach us directly</div>
+          <div style="font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--accent);letter-spacing:0.04em;">careers@nexora.agency</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo-col"><a href="index.html" class="foot-logo">Nexora</a></div>
+  <div class="foot-content">
+    <div>
+      <p class="foot-tagline">Empowering San Diego small businesses with smart digital systems that simplify, automate, and grow.</p>
+      <p class="foot-copy">© 2025 Nexora. San Diego, California. All rights reserved.</p>
+    </div>
+    <div>
+      <div class="foot-col-title">Services</div>
+      <div class="foot-links">
+        <a href="solutions.html" class="foot-link">Custom Websites</a>
+        <a href="solutions.html" class="foot-link">QR Ordering Systems</a>
+        <a href="solutions.html" class="foot-link">AI Phone Agents</a>
+        <a href="solutions.html" class="foot-link">Booking Systems</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-col-title">Company</div>
+      <div class="foot-links">
+        <a href="index.html" class="foot-link">Home</a>
+        <a href="solutions.html" class="foot-link">Solutions</a>
+        <a href="contact.html" class="foot-link">Contact</a>
+        <a href="join.html" class="foot-link">Join the Team</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-col-title">Legal</div>
+      <div class="foot-links">
+        <a href="#" class="foot-link">Privacy</a>
+        <a href="#" class="foot-link">Terms</a>
+        <a href="#" class="foot-link">Security</a>
+        <a href="#" class="foot-link">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  let mx = window.innerWidth/2, my = window.innerHeight/2, rx = mx, ry = my;
+
+  document.querySelectorAll('input,textarea,select').forEach(el => el.style.cursor = 'none');
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  function animateCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  document.querySelectorAll('a,button,.role-opt,.role-card,.val-item,.perk,input,textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='18px'; cursor.style.height='18px'; ring.style.width='52px'; ring.style.height='52px'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='10px'; cursor.style.height='10px'; ring.style.width='36px'; ring.style.height='36px'; });
+  });
+
+  function toggleRole(el) {
+    document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('roleHidden').value = el.textContent.trim();
+  }
+
+  async function handleApply(e) {
+    e.preventDefault();
+    const btn = document.getElementById('applyBtn');
+    const form = document.getElementById('applyForm');
+    btn.innerHTML = '<span>SENDING...</span><span>◆</span>';
+    btn.disabled = true;
+    try {
+      const res = await fetch('https://formspree.io/f/mldqnldp', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        btn.innerHTML = '<span>APPLICATION SENT ✓</span><span>◆</span>';
+        btn.style.background = '#1a1a1a';
+        btn.style.color = 'var(--accent)';
+        btn.style.border = '1px solid var(--accent)';
+        form.reset();
+        document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
+        document.getElementById('roleHidden').value = '';
+      } else {
+        btn.innerHTML = '<span>ERROR — TRY AGAIN</span><span>✕</span>';
+        btn.style.background = '#1a1a1a'; btn.style.color = '#ff5f56'; btn.style.border = '1px solid #ff5f56';
+        btn.disabled = false;
+      }
+    } catch { btn.innerHTML = '<span>ERROR — TRY AGAIN</span><span>✕</span>'; btn.disabled = false; }
+  }
+</script>
+</body>
+</html>

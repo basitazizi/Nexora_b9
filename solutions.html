@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solutions — Nexora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@700;800;900&display=swap&family=Inter:wght@300;400;500;600" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #080808; --surface: #111111; --surface2: #181818;
+    --border: #282828; --muted: #555; --text: #c8c8c8;
+    --white: #f0f0f0; --accent: #dcff56; --accent-dim: rgba(220,255,86,0.12);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Space Mono', monospace; overflow-x: hidden; cursor: none; }
+
+  .cursor { position: fixed; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s; mix-blend-mode: difference; }
+  .cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid var(--accent); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform 0.25s ease, width 0.2s, height 0.2s; opacity: 0.5; }
+
+  /* NAV */
+  nav { display: flex; align-items: stretch; border-bottom: 1px solid var(--border); height: 56px; }
+  .nav-logo { width: 140px; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--border); font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; font-style: italic; color: var(--accent); letter-spacing: -0.02em; flex-shrink: 0; text-decoration: none; }
+  .nav-items { display: flex; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 0 24px; border-right: 1px solid var(--border); font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; cursor: none; transition: color 0.2s; text-decoration: none; }
+  .nav-item:hover { color: var(--white); }
+  .nav-item .dot { width: 6px; height: 6px; background: var(--muted); flex-shrink: 0; transition: background 0.2s; }
+  .nav-item:hover .dot { background: var(--accent); }
+  .nav-item.active { color: var(--black); background: var(--accent); }
+  .nav-item.active .dot { background: var(--black); }
+  .nav-spacer { flex: 1; }
+
+  /* PAGE HERO */
+  .page-hero {
+    display: grid; grid-template-columns: 140px 1fr;
+    border-bottom: 1px solid var(--border);
+    min-height: 340px;
+  }
+  .ph-sidebar {
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 48px;
+  }
+  .ph-sidebar-label { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.58rem; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .ph-sidebar-label::before { content: '■'; font-size: 0.4rem; color: var(--accent); writing-mode: horizontal-tb; transform: rotate(90deg); }
+  .ph-content { padding: 64px 72px; display: flex; flex-direction: column; justify-content: center; }
+  .ph-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 0.58rem; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; margin-bottom: 28px; }
+  .ph-tag::before { content: '◆'; font-size: 0.5rem; }
+  .ph-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 5vw, 5rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; color: var(--white); }
+  .ph-title .aw { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--accent); letter-spacing: 0.04em; }
+  .ph-title .it { font-style: italic; color: var(--text); }
+  .ph-sub { font-size: 0.85rem; line-height: 1.9; color: var(--muted); max-width: 520px; margin-top: 24px; letter-spacing: 0.03em; }
+
+  /* SOLUTIONS GRID */
+  .solutions-section { display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid var(--border); }
+  .sol-sidebar { border-right: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+  .sol-sidebar-lbl { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .sol-sidebar-lbl::before { content: '■'; font-size: 0.35rem; color: var(--accent); writing-mode: horizontal-tb; transform: rotate(90deg); }
+  .sol-content { padding: 72px 72px 0; }
+
+  .sol-card {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--border); margin-bottom: -1px;
+    transition: background 0.2s; position: relative; overflow: hidden;
+  }
+  .sol-card:hover { background: var(--surface2); }
+  .sol-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); transform: scaleY(0); transform-origin: top; transition: transform 0.3s; }
+  .sol-card:hover::before { transform: scaleY(1); }
+  .sol-card-left { padding: 48px 48px 48px 52px; border-right: 1px solid var(--border); }
+  .sol-card-right { padding: 48px; display: flex; flex-direction: column; justify-content: space-between; }
+
+  .sol-num { font-family: 'Barlow Condensed', sans-serif; font-size: 4rem; font-weight: 900; color: var(--border); line-height: 1; margin-bottom: 24px; }
+  .sol-tag { font-size: 0.55rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .sol-name { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 300; color: var(--white); line-height: 1.1; margin-bottom: 20px; }
+  .sol-desc { font-size: 0.82rem; line-height: 1.9; color: var(--muted); letter-spacing: 0.03em; max-width: 380px; }
+
+  .sol-features { list-style: none; margin-bottom: 32px; }
+  .sol-features li { font-size: 0.6rem; color: var(--text); padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; letter-spacing: 0.04em; }
+  .sol-features li::before { content: '◆'; font-size: 0.4rem; color: var(--accent); flex-shrink: 0; }
+
+  .sol-price { font-family: 'Barlow Condensed', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--white); display: flex; align-items: baseline; gap: 6px; margin-bottom: 20px; }
+  .sol-price .sym { color: var(--accent); }
+  .sol-price small { font-size: 0.65rem; color: var(--muted); font-family: 'Space Mono'; font-weight: 400; }
+
+  .btn-sol { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--black); padding: 12px 24px; font-family: 'Space Mono', monospace; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; cursor: none; transition: transform 0.15s; width: fit-content; }
+  .btn-sol:hover { transform: translateY(-2px); }
+  .btn-sol::before { content: '▸'; }
+
+  /* Visual preview boxes */
+  .sol-visual { height: 160px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  .sol-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, var(--accent-dim), transparent 70%); }
+
+  /* website preview */
+  .prev-web { width: 85%; height: 80%; background: #141414; border: 1px solid #252525; border-radius: 4px; padding: 8px; display: flex; flex-direction: column; gap: 5px; position: relative; z-index: 1; }
+  .pw-bar { height: 10px; background: #1c1c1c; border-radius: 2px; display: flex; align-items: center; padding: 0 6px; gap: 4px; }
+  .pw-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .pw-dot:nth-child(1){background:#ff5f56} .pw-dot:nth-child(2){background:#ffbd2e} .pw-dot:nth-child(3){background:#27c93f}
+  .pw-hero { flex: 1; background: #111; border-radius: 2px; display: flex; align-items: center; padding: 8px; gap: 8px; }
+  .pw-text { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .pw-line { height: 4px; background: #2a2a2a; border-radius: 2px; }
+  .pw-line.a { background: var(--accent); width: 60%; }
+  .pw-line.b { width: 80%; } .pw-line.c { width: 45%; }
+  .pw-cta { height: 14px; background: var(--accent); border-radius: 2px; width: 50px; }
+  .pw-img { width: 40%; height: 100%; background: #1e1e1e; border-radius: 2px; }
+
+  /* QR preview */
+  .prev-qr { width: 85%; height: 80%; position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .qr-block { width: 70px; height: 70px; background: #141414; border: 1px solid var(--accent); border-radius: 4px; display: grid; grid-template-columns: repeat(5,1fr); gap: 2px; padding: 6px; }
+  .qr-cell { background: var(--muted); border-radius: 1px; }
+  .qr-cell.b { background: #1c1c1c; }
+  .qr-cell.a { background: var(--accent); }
+  .qr-label { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.1em; text-align: center; }
+  .qr-arrow { color: var(--accent); font-size: 1.2rem; }
+
+  /* booking preview */
+  .prev-book { width: 85%; height: 80%; background: #141414; border: 1px solid #252525; border-radius: 4px; padding: 10px; position: relative; z-index: 1; }
+  .pb-title { font-size: 0.45rem; color: var(--accent); letter-spacing: 0.12em; margin-bottom: 8px; }
+  .pb-slots { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; margin-bottom: 8px; }
+  .pb-slot { height: 18px; background: #1e1e1e; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 0.38rem; color: #444; }
+  .pb-slot.taken { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(220,255,86,0.2); }
+  .pb-slot.selected { background: var(--accent); color: #000; }
+  .pb-confirm { height: 16px; background: var(--accent); border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 0.4rem; color: #000; font-weight: 700; letter-spacing: 0.1em; }
+
+  /* AI preview */
+  .prev-ai { width: 85%; height: 80%; background: #141414; border: 1px solid #252525; border-radius: 4px; padding: 10px; position: relative; z-index: 1; display: flex; flex-direction: column; gap: 6px; }
+  .ai-msg { display: flex; gap: 6px; align-items: flex-end; }
+  .ai-msg.out { flex-direction: row-reverse; }
+  .ai-avatar { width: 18px; height: 18px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(220,255,86,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.4rem; color: var(--accent); flex-shrink: 0; }
+  .ai-bubble { background: #1e1e1e; border-radius: 8px 8px 8px 2px; padding: 5px 8px; font-size: 0.42rem; color: var(--text); max-width: 75%; letter-spacing: 0.02em; }
+  .ai-msg.out .ai-bubble { background: var(--accent-dim); border-radius: 8px 8px 2px 8px; color: var(--accent); border: 1px solid rgba(220,255,86,0.2); }
+  .ai-status { font-size: 0.38rem; color: var(--accent); letter-spacing: 0.1em; text-align: center; padding: 4px 0; }
+
+  /* MARQUEE */
+  .marquee-wrap { border-bottom: 1px solid var(--border); overflow: hidden; padding: 16px 0; background: var(--surface); }
+  .marquee-inner { display: flex; gap: 48px; animation: marquee 20s linear infinite; white-space: nowrap; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .marquee-item { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 0.2em; color: var(--border); text-transform: uppercase; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .marquee-item .sep { color: var(--accent); font-size: 0.8rem; }
+
+  /* INDUSTRIES */
+  .industries { display: grid; grid-template-columns: 140px 1fr; border-bottom: 1px solid var(--border); }
+  .ind-sidebar { border-right: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: center; padding-top: 40px; }
+  .ind-sidebar-lbl { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+  .ind-sidebar-lbl::before { content: '■'; font-size: 0.35rem; color: var(--accent); writing-mode: horizontal-tb; transform: rotate(90deg); }
+  .ind-content { padding: 72px; }
+  .ind-heading { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.4rem, 3.5vw, 3.4rem); font-weight: 300; line-height: 1.1; margin-bottom: 48px; }
+  .ind-heading .aw { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; color: var(--accent); letter-spacing: 0.06em; }
+
+  .ind-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .ind-item { background: var(--black); padding: 36px 28px; cursor: none; transition: background 0.2s; position: relative; overflow: hidden; }
+  .ind-item:hover { background: var(--surface2); }
+  .ind-item::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .ind-item:hover::after { transform: scaleX(1); }
+  .ind-icon { font-size: 1.8rem; margin-bottom: 20px; }
+  .ind-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 10px; }
+  .ind-desc { font-size: 0.58rem; color: var(--muted); line-height: 1.9; letter-spacing: 0.03em; }
+
+  /* FOOTER */
+  footer { display: grid; grid-template-columns: 140px 1fr; border-top: 1px solid var(--border); }
+  .foot-logo-col { border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; padding: 40px; }
+  .foot-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-style: italic; color: var(--accent); text-decoration: none; }
+  .foot-content { padding: 48px 56px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .foot-tagline { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 400; color: var(--text); line-height: 1.7; font-family: 'Inter', sans-serif; margin-bottom: 20px; }
+  .foot-copy { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.08em; }
+  .foot-col-title { font-size: 0.58rem; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 16px; }
+  .foot-links { display: flex; flex-direction: column; gap: 10px; }
+  .foot-link { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; text-decoration: none; transition: color 0.2s; cursor: none; }
+  .foot-link:hover { color: var(--white); }
+
+  body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 1000; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); background-repeat: repeat; background-size: 128px 128px; }
+
+  .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.8s ease forwards; }
+  @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+  .fade-in:nth-child(1){animation-delay:0.1s} .fade-in:nth-child(2){animation-delay:0.25s} .fade-in:nth-child(3){animation-delay:0.4s}
+
+  /* Keep Space Mono for nav/labels/tags only */
+  nav, .nav-item, .nav-logo,
+  .ann-badge, .hero-tag, .ph-tag, .sidebar-label, .ph-sidebar-label,
+  .pc-tag, .sol-tag, .feat-icon, .sol-num, .step-num,
+  .rc-title, .rc-stat-val, .rc-stat-label,
+  .marquee-item, .sm-title, .sm-badge, .metric-label,
+  .chart-lbl, .foot-col-title, .foot-copy,
+  .form-label, .info-block-label, .info-lbl,
+  .role-type, .role-tag, .org-card-tag, .org-status,
+  .ms-label, .role-opt, .btn-primary, .btn-ghost,
+  .btn-sol, .btn-submit, .btn-price, .btn-cta-large, .role-apply,
+  .ss-item, .tb-title, .ss-logo,
+  .learn-more, .svc-opt, .sec-sidebar-lbl, .val-sidebar-lbl,
+  .sol-sidebar-lbl, .feat-sidebar-lbl, .pop-sidebar-label, .cb-sidebar-lbl,
+  .apply-sidebar-lbl, .roles-sidebar-lbl, .guar-sidebar-lbl,
+  .ph-tag, .price-badge, .ind-sidebar-lbl, .cs-label {
+    font-family: 'Space Mono', monospace !important;
+  }
+
+  /* Inter for all body/paragraph/description text */
+  .hero-desc, .ph-sub, .sol-desc, .pc-desc, .feat-desc,
+  .val-desc, .step-desc, .ind-desc, .guar-desc,
+  .info-block-sub, .info-sub, .foot-tagline,
+  .perk-desc, .role-location, .foot-link, .foot-link:hover,
+  .rc-stat-label, .ph-sub, .cta-sub {
+    font-family: 'Inter', sans-serif !important;
+    letter-spacing: 0em !important;
+  }
+
+
+/* ============================================
+   MOBILE RESPONSIVE — all breakpoints
+   ============================================ */
+
+/* Base fix — prevent ANY horizontal scroll */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+* { box-sizing: border-box; }
+
+@media (max-width: 768px) {
+
+  /* NAV */
+  nav {
+    height: auto;
+    flex-wrap: wrap;
+  }
+  .nav-logo {
+    width: 50%;
+    height: 52px;
+    border-right: 1px solid var(--border);
+  }
+  .nav-items {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-item {
+    padding: 0 16px;
+    height: 44px;
+    font-size: 0.55rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-spacer { display: none; }
+
+  /* ANNOUNCEMENT */
+  .announcement {
+    padding: 10px 16px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .announcement-left { font-size: 0.6rem; flex-wrap: wrap; gap: 6px; }
+
+  /* HERO */
+  .hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+  }
+  .hero-sidebar { display: none !important; }
+  .hero-content {
+    padding: 48px 24px 36px !important;
+    border-right: none !important;
+  }
+  .hero-visual {
+    min-height: 360px !important;
+    width: 100% !important;
+  }
+  .saas-wrapper {
+    width: 88% !important;
+    transform: perspective(900px) rotateY(-4deg) rotateX(3deg) !important;
+  }
+  @keyframes floatUp {
+    0%,100% { transform: perspective(900px) rotateY(-4deg) rotateX(3deg) translateY(0px); }
+    50%      { transform: perspective(900px) rotateY(-4deg) rotateX(3deg) translateY(-8px); }
+  }
+  .saas-body { height: 260px !important; }
+  .user-pill { left: -4px !important; top: 16px !important; }
+  .notif { right: -4px !important; bottom: 16px !important; min-width: 160px !important; }
+  .hero-title { font-size: clamp(2.2rem, 8vw, 3.2rem) !important; }
+  .slide-dots { margin-top: 32px !important; }
+
+  /* PAGE HERO (inner pages) */
+  .page-hero {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    grid-template-columns: unset !important;
+  }
+  .ph-sidebar { display: none !important; }
+  .ph-content {
+    padding: 48px 24px 36px !important;
+    border-right: none !important;
+  }
+  .ph-title { font-size: clamp(2.2rem, 8vw, 3.4rem) !important; }
+  .ph-visual {
+    min-height: 340px !important;
+    width: 100% !important;
+  }
+
+  /* CLIENTS STRIP */
+  .clients-strip {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .cs-label { display: none !important; }
+  .clients-row {
+    padding: 0 !important;
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+  }
+  .client-logo {
+    flex: 0 0 50% !important;
+    padding: 18px 16px !important;
+    font-size: 0.65rem !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .client-logo:nth-child(odd) { border-right: 1px solid var(--border) !important; }
+
+  /* MARQUEE */
+  .marquee-wrap { padding: 12px 0; }
+  .marquee-item { font-size: 0.75rem; }
+
+  /* POPULARITY / PRODUCTS */
+  .popularity {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .pop-sidebar { display: none !important; }
+  .pop-content { padding: 40px 24px !important; }
+  .pop-heading { font-size: clamp(2rem, 7vw, 3rem) !important; margin-bottom: 32px !important; }
+  .products-grid {
+    grid-template-columns: 1fr !important;
+    background: transparent !important;
+    border: none !important;
+    gap: 1px !important;
+  }
+  .product-card {
+    border: 1px solid var(--border) !important;
+    margin-bottom: -1px !important;
+  }
+
+  /* FEATURES */
+  .features {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .feat-sidebar { display: none !important; }
+  .feat-content { padding: 40px 24px !important; }
+  .feat-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .feat-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .feat-item { padding: 24px 18px !important; }
+
+  /* SOLUTIONS PAGE */
+  .solutions-section {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sol-sidebar { display: none !important; }
+  .sol-content { padding: 40px 24px 0 !important; }
+  .sol-card {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sol-card-left, .sol-card-right {
+    padding: 28px 24px !important;
+    border-right: none !important;
+  }
+  .sol-name { font-size: 1.7rem !important; }
+
+  /* INDUSTRIES */
+  .industries {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .ind-sidebar { display: none !important; }
+  .ind-content { padding: 40px 24px !important; }
+  .ind-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .ind-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .ind-item { padding: 24px 18px !important; }
+
+  /* CONTACT PAGE */
+  .contact-body {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .cb-sidebar { display: none !important; }
+  .cb-content {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .form-col {
+    padding: 40px 24px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+  .service-select {
+    grid-template-columns: 1fr !important;
+  }
+  .info-col { padding: 40px 24px !important; }
+  .rc-stats {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* JOIN PAGE */
+  .section-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sec-sidebar { display: none !important; }
+  .sec-content { padding: 40px 24px !important; }
+  .sec-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .val-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .val-item { padding: 28px 24px !important; }
+  .role-card {
+    grid-template-columns: 1fr !important;
+    padding: 24px !important;
+    gap: 20px !important;
+  }
+  .role-right {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+  .role-location { text-align: left !important; }
+
+  .apply-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .apply-form-col {
+    padding: 40px 24px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .form-row { grid-template-columns: 1fr !important; }
+  .role-select { gap: 6px !important; }
+  .apply-info-col { padding: 40px 24px !important; }
+  .perks-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .perk { padding: 16px !important; }
+
+  /* ORG CHART */
+  .org-wrap { width: 92% !important; }
+  .org-card { width: 80px !important; }
+  .org-card-role { font-size: 0.5rem !important; }
+  .org-card-tag { font-size: 0.36rem !important; }
+  .mission-stat-row {
+    flex-wrap: wrap !important;
+  }
+  .mission-stat {
+    flex: 0 0 50% !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  /* STEPS */
+  .steps {
+    grid-template-columns: 1fr !important;
+    background: transparent !important;
+    border: none !important;
+  }
+  .step {
+    border: 1px solid var(--border) !important;
+    margin-bottom: -1px !important;
+  }
+  .step-connector { display: none !important; }
+
+  /* PRICING GRID */
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* GUARANTEE */
+  .guarantee {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .guar-sidebar { display: none !important; }
+  .guar-content { padding: 40px 24px !important; }
+  .guar-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .guar-item { padding: 28px 20px !important; }
+
+  /* CTA BANNER */
+  .cta-banner {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .cta-side {
+    height: 48px !important;
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  .cta-side-text {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+    font-size: 0.75rem !important;
+  }
+  .cta-inner {
+    flex-direction: column !important;
+    padding: 40px 24px !important;
+    gap: 28px !important;
+    align-items: flex-start !important;
+  }
+  .cta-title { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; }
+  .btn-cta-large {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 16px 24px !important;
+  }
+
+  /* HOME CTA BANNER (inline style) */
+  section[style*="grid-template-columns: 140px"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* FOOTER */
+  footer {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .foot-logo-col {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 28px 24px !important;
+    justify-content: flex-start !important;
+  }
+  .foot-content {
+    grid-template-columns: 1fr 1fr !important;
+    padding: 32px 24px !important;
+    gap: 28px !important;
+  }
+
+  /* PROCESS SECTION */
+  .process {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .proc-sidebar { display: none !important; }
+  .proc-content { padding: 40px 24px !important; }
+  .proc-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+  .pricing-heading { font-size: clamp(1.6rem, 6vw, 2.4rem) !important; }
+  .roles {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .roles-sidebar { display: none !important; }
+  .roles-content { padding: 40px 24px !important; }
+  .roles-heading { font-size: clamp(1.8rem, 7vw, 2.8rem) !important; margin-bottom: 32px !important; }
+
+  .apply-section {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .apply-sidebar { display: none !important; }
+
+  /* General heading sizes on mobile */
+  h1, .ph-title { font-size: clamp(2.2rem, 8vw, 3.2rem) !important; }
+  h2 { font-size: clamp(1.8rem, 6vw, 2.6rem) !important; }
+
+  /* Remove any overflow causing widths */
+  .saas-sidebar { width: 110px !important; }
+  .saas-body { grid-template-columns: 110px 1fr !important; }
+}
+
+@media (max-width: 480px) {
+  .feat-grid { grid-template-columns: 1fr !important; }
+  .ind-grid { grid-template-columns: 1fr !important; }
+  .foot-content { grid-template-columns: 1fr !important; }
+  .perks-grid { grid-template-columns: 1fr !important; }
+  .rc-stats { grid-template-columns: 1fr 1fr !important; }
+  .hero-title, .ph-title { font-size: clamp(2rem, 9vw, 2.8rem) !important; }
+  .saas-wrapper { width: 94% !important; }
+  .role-right { flex-direction: column !important; align-items: flex-start !important; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Nexora</a>
+  <div class="nav-items">
+    <a href="solutions.html" class="nav-item active"><span class="dot"></span> Solutions</a>
+    <a href="contact.html" class="nav-item"><span class="dot"></span> Contact</a>
+    <a href="join.html" class="nav-item"><span class="dot"></span> Join</a>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="ph-sidebar">
+    <div class="ph-sidebar-label">Solutions</div>
+    <div class="ph-sidebar-label">San Diego</div>
+  </div>
+  <div class="ph-content">
+    <div class="ph-tag fade-in">What We Build</div>
+    <h1 class="ph-title fade-in">
+      Digital Systems That<br>
+      <span class="aw">ACTUALLY</span> Drive <span class="it">Growth</span>
+    </h1>
+    <p class="ph-sub fade-in">Four core solutions designed specifically for San Diego small businesses — each one built to save time, reduce manual work, and bring in more customers.</p>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <div class="marquee-item">Custom Websites <span class="sep">◆</span></div>
+    <div class="marquee-item">AI Automation <span class="sep">◆</span></div>
+    <div class="marquee-item">QR Ordering Systems <span class="sep">◆</span></div>
+    <div class="marquee-item">Appointment Booking <span class="sep">◆</span></div>
+    <div class="marquee-item">AI Phone Agents <span class="sep">◆</span></div>
+    <div class="marquee-item">San Diego, CA <span class="sep">◆</span></div>
+    <div class="marquee-item">Custom Websites <span class="sep">◆</span></div>
+    <div class="marquee-item">AI Automation <span class="sep">◆</span></div>
+    <div class="marquee-item">QR Ordering Systems <span class="sep">◆</span></div>
+    <div class="marquee-item">Appointment Booking <span class="sep">◆</span></div>
+    <div class="marquee-item">AI Phone Agents <span class="sep">◆</span></div>
+    <div class="marquee-item">San Diego, CA <span class="sep">◆</span></div>
+  </div>
+</div>
+
+<!-- SOLUTIONS CARDS -->
+<section class="solutions-section">
+  <div class="sol-sidebar">
+    <div class="sol-sidebar-lbl">Our Services</div>
+  </div>
+  <div class="sol-content">
+
+    <!-- 01 Websites -->
+    <div class="sol-card">
+      <div class="sol-card-left">
+        <div class="sol-num">01</div>
+        <div class="sol-tag">Design & Development</div>
+        <div class="sol-name">Custom<br>Websites</div>
+        <div class="sol-desc">High-converting, mobile-first websites designed from scratch to represent your brand and turn visitors into paying customers. No templates. No filler. Built to rank and built to close.</div>
+      </div>
+      <div class="sol-card-right">
+        <div>
+          <div class="sol-visual">
+            <div class="prev-web">
+              <div class="pw-bar"><div class="pw-dot"></div><div class="pw-dot"></div><div class="pw-dot"></div></div>
+              <div class="pw-hero">
+                <div class="pw-text">
+                  <div class="pw-line a"></div>
+                  <div class="pw-line b"></div>
+                  <div class="pw-line c"></div>
+                  <div style="margin-top:6px"><div class="pw-cta"></div></div>
+                </div>
+                <div class="pw-img"></div>
+              </div>
+            </div>
+          </div>
+          <ul class="sol-features">
+            <li>Custom design — no Wix, no templates</li>
+            <li>Mobile-first, fast-loading, SEO-ready</li>
+            <li>Contact forms, booking links, Google Maps</li>
+            <li>Delivered in 7–14 business days</li>
+          </ul>
+        </div>
+        <div>
+          
+          <a href="join.html" class="btn-sol">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 QR Ordering -->
+    <div class="sol-card">
+      <div class="sol-card-left">
+        <div class="sol-num">02</div>
+        <div class="sol-tag">Restaurants & Cafés</div>
+        <div class="sol-name">QR Code<br>Ordering Systems</div>
+        <div class="sol-desc">Let customers scan, browse, and order directly from their phone — no app download needed. Perfect for restaurants, cafés, and food trucks that want faster table turnover and fewer order errors.</div>
+      </div>
+      <div class="sol-card-right">
+        <div>
+          <div class="sol-visual">
+            <div class="prev-qr">
+              <div>
+                <div class="qr-block">
+                  <div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell a"></div>
+                  <div class="qr-cell b"></div><div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell a"></div><div class="qr-cell b"></div>
+                  <div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell a"></div><div class="qr-cell a"></div><div class="qr-cell b"></div>
+                  <div class="qr-cell b"></div><div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell b"></div><div class="qr-cell a"></div>
+                  <div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell a"></div><div class="qr-cell b"></div><div class="qr-cell a"></div>
+                </div>
+                <div class="qr-label" style="margin-top:6px">SCAN TO ORDER</div>
+              </div>
+              <div class="qr-arrow">→</div>
+              <div style="background:#141414;border:1px solid #252525;border-radius:4px;padding:8px;width:80px;">
+                <div style="font-size:0.4rem;color:var(--accent);letter-spacing:0.1em;margin-bottom:6px;">MENU</div>
+                <div style="height:5px;background:#1e1e1e;border-radius:2px;margin-bottom:3px;"></div>
+                <div style="height:5px;background:#1e1e1e;border-radius:2px;margin-bottom:3px;width:70%"></div>
+                <div style="height:5px;background:var(--accent);border-radius:2px;margin-bottom:6px;width:50%"></div>
+                <div style="height:12px;background:var(--accent);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:0.35rem;color:#000;font-weight:700">ORDER</div>
+              </div>
+            </div>
+          </div>
+          <ul class="sol-features">
+            <li>Scan-to-order — no app, no friction</li>
+            <li>Live menu editing from your phone</li>
+            <li>Works for dine-in, takeout, and pickup</li>
+            <li>Integrates with payment processors</li>
+          </ul>
+        </div>
+        <div>
+          
+          <a href="join.html" class="btn-sol">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 Booking -->
+    <div class="sol-card">
+      <div class="sol-card-left">
+        <div class="sol-num">03</div>
+        <div class="sol-tag">Barbershops, Salons & Services</div>
+        <div class="sol-name">Appointment<br>Scheduling Systems</div>
+        <div class="sol-desc">A fully automated booking system with confirmations, reminders, and calendar integrations. Clients book online — you just show up. Works for barbershops, salons, cleaning services, and more.</div>
+      </div>
+      <div class="sol-card-right">
+        <div>
+          <div class="sol-visual">
+            <div class="prev-book">
+              <div class="pb-title">BOOK YOUR APPOINTMENT</div>
+              <div class="pb-slots">
+                <div class="pb-slot taken">9:00 AM</div>
+                <div class="pb-slot">10:00 AM</div>
+                <div class="pb-slot selected">11:00 AM</div>
+                <div class="pb-slot taken">1:00 PM</div>
+                <div class="pb-slot">2:00 PM</div>
+                <div class="pb-slot taken">3:00 PM</div>
+              </div>
+              <div class="pb-confirm">CONFIRM BOOKING</div>
+            </div>
+          </div>
+          <ul class="sol-features">
+            <li>24/7 online booking — no phone calls</li>
+            <li>Automated SMS & email reminders</li>
+            <li>Google Calendar sync</li>
+            <li>Reduce no-shows by up to 60%</li>
+          </ul>
+        </div>
+        <div>
+          
+          <a href="join.html" class="btn-sol">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 04 AI Automation -->
+    <div class="sol-card" style="margin-bottom:0;border-bottom:none;">
+      <div class="sol-card-left">
+        <div class="sol-num">04</div>
+        <div class="sol-tag">AI Automation</div>
+        <div class="sol-name">AI Calls &<br>Text Agents</div>
+        <div class="sol-desc">AI-powered agents that handle inbound calls, respond to texts, book appointments, and follow up with customers — automatically, around the clock. Never miss a lead again.</div>
+      </div>
+      <div class="sol-card-right">
+        <div>
+          <div class="sol-visual">
+            <div class="prev-ai">
+              <div class="ai-status">● AI AGENT ONLINE — 24/7</div>
+              <div class="ai-msg">
+                <div class="ai-avatar"></div>
+                <div class="ai-bubble">Hi, I'd like to book a haircut for Saturday</div>
+              </div>
+              <div class="ai-msg out">
+                <div class="ai-avatar">◆</div>
+                <div class="ai-bubble">I have 10am and 2pm open on Saturday. Which works for you?</div>
+              </div>
+              <div class="ai-msg">
+                <div class="ai-avatar"></div>
+                <div class="ai-bubble">10am please!</div>
+              </div>
+              <div class="ai-msg out">
+                <div class="ai-avatar">◆</div>
+                <div class="ai-bubble">Booked! Confirmation sent to your number </div>
+              </div>
+            </div>
+          </div>
+          <ul class="sol-features">
+            <li>Handles calls, texts & follow-ups</li>
+            <li>Books appointments automatically</li>
+            <li>Works 24/7 — nights, weekends, holidays</li>
+            <li>Integrates with your existing systems</li>
+          </ul>
+        </div>
+        <div>
+          
+          <a href="join.html" class="btn-sol">Get Started</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHO WE SERVE -->
+<section class="industries">
+  <div class="ind-sidebar">
+    <div class="ind-sidebar-lbl">Who We Serve</div>
+  </div>
+  <div class="ind-content">
+    <h2 class="ind-heading">
+      Built for San Diego's<br>
+      <span class="aw">LOCAL</span> <em style="color:var(--text)">Businesses</em>
+    </h2>
+    <div class="ind-grid">
+      <div class="ind-item">
+        <div class="ind-icon">◆</div>
+        <div class="ind-name">Restaurants & Cafés</div>
+        <div class="ind-desc">QR ordering, online menus, and AI agents that handle reservations and delivery questions.</div>
+      </div>
+      <div class="ind-item">
+        <div class="ind-icon">◆</div>
+        <div class="ind-name">Barbershops & Salons</div>
+        <div class="ind-desc">Automated booking, AI phone agents, and websites that fill your calendar on autopilot.</div>
+      </div>
+      <div class="ind-item">
+        <div class="ind-icon">◆</div>
+        <div class="ind-name">Cleaning Services</div>
+        <div class="ind-desc">Scheduling systems, quote request forms, and follow-up automation that wins repeat clients.</div>
+      </div>
+      <div class="ind-item">
+        <div class="ind-icon">◆</div>
+        <div class="ind-name">Service Businesses</div>
+        <div class="ind-desc">Plumbers, contractors, and trades — websites and AI agents that turn leads into booked jobs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo-col"><a href="index.html" class="foot-logo">Nexora</a></div>
+  <div class="foot-content">
+    <div>
+      <p class="foot-tagline">Empowering San Diego small businesses with smart digital systems that simplify, automate, and grow.</p>
+      <p class="foot-copy">© 2025 Nexora. San Diego, California. All rights reserved.</p>
+    </div>
+    <div>
+      <div class="foot-col-title">Services</div>
+      <div class="foot-links">
+        <a href="solutions.html" class="foot-link">Custom Websites</a>
+        <a href="solutions.html" class="foot-link">QR Ordering Systems</a>
+        <a href="solutions.html" class="foot-link">AI Phone Agents</a>
+        <a href="solutions.html" class="foot-link">Booking Systems</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-col-title">Company</div>
+      <div class="foot-links">
+        <a href="index.html" class="foot-link">Home</a>
+        <a href="solutions.html" class="foot-link">Solutions</a>
+        <a href="contact.html" class="foot-link">Contact</a>
+        <a href="join.html" class="foot-link">Join</a>
+      </div>
+    </div>
+    <div>
+      <div class="foot-col-title">Legal</div>
+      <div class="foot-links">
+        <a href="#" class="foot-link">Privacy</a>
+        <a href="#" class="foot-link">Terms</a>
+        <a href="#" class="foot-link">Security</a>
+        <a href="#" class="foot-link">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  function animateCursor(){
+    cursor.style.left=mx+'px';cursor.style.top=my+'px';
+    rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+    ring.style.left=rx+'px';ring.style.top=ry+'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+  document.querySelectorAll('a,.sol-card,.ind-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cursor.style.width='18px';cursor.style.height='18px';ring.style.width='52px';ring.style.height='52px';});
+    el.addEventListener('mouseleave',()=>{cursor.style.width='10px';cursor.style.height='10px';ring.style.width='36px';ring.style.height='36px';});
+  });
+</script>
+</body>
+</html>
