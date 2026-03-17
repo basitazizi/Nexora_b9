@@ -564,6 +564,46 @@ html, body {
   .role-right { flex-direction: column !important; align-items: flex-start !important; }
 }
 
+
+  /* Nav CTA button */
+  .nav-cta {
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    background: var(--accent);
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    transition: background 0.2s, letter-spacing 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
+    border-left: 1px solid rgba(0,0,0,0.15);
+    position: relative;
+  }
+  .nav-cta::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    transition: background 0.2s;
+  }
+  .nav-cta:hover::after { background: rgba(0,0,0,0.1); }
+  .nav-cta:hover { letter-spacing: 0.18em; }
+  .nav-cta-active { background: var(--accent); box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); }
+
+  @media (max-width: 768px) {
+    .nav-cta {
+      padding: 0 18px;
+      font-size: 0.55rem;
+      height: 44px;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -577,6 +617,8 @@ html, body {
     <a href="solutions.html" class="nav-item"><span class="dot"></span> Solutions</a>
     <a href="contact.html" class="nav-item active"><span class="dot"></span> Contact</a>
     <a href="join.html" class="nav-item"><span class="dot"></span> Join</a>
+    <div class="nav-spacer"></div>
+    <a href="contact.html" class="nav-cta nav-cta-active">▸ CONTACT US</a>
   </div>
 </nav>
 
@@ -708,7 +750,7 @@ html, body {
 
       <div class="info-block">
         <div class="info-block-label">Email</div>
-        <div class="info-block-value" style="font-family:'Space Mono',monospace;font-size:0.9rem;color:var(--accent);letter-spacing:0.04em;">hello@nexora.agency</div>
+        <div class="info-block-value" style="font-family:'Space Mono',monospace;font-size:0.9rem;color:var(--accent);letter-spacing:0.04em;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e088858c8c8fa08e85988f9281ce8187858e8399">[email&#160;protected]</a></div>
         <div class="info-block-sub">For general inquiries, project questions, or partnership opportunities.</div>
       </div>
 
@@ -784,7 +826,7 @@ html, body {
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursorRing');
   let mx = window.innerWidth/2, my = window.innerHeight/2, rx = mx, ry = my;
@@ -833,9 +875,4 @@ html, body {
         document.getElementById('serviceHidden').value = 'Custom Website';
       } else {
         btn.innerHTML = '<span>ERROR — TRY AGAIN</span><span>✕</span>';
-        btn.style.background = '#1a1a1a'; btn.style.color = '#ff5f56'; btn.style.border = '1px solid #ff5f56';
-        btn.disabled = false;
-      }
-    } catch { btn.innerHTML = '<span>ERROR — TRY AGAIN</span><span>✕</span>'; btn.disabled = false; }
-  }
-</script>
+        btn.style.background = '#1a1a1
